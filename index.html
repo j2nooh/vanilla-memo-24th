@@ -49,7 +49,7 @@
         </form>
 
         <div class="header-actions">
-          <button class="icon-button" type="button" aria-label="메모 작성">
+          <button id="memo-create-button" class="icon-button" type="button" aria-label="메모 작성">
             <img src="./assets/icons/plus.svg" alt="" />
           </button>
           <button class="icon-button" type="button" aria-label="프로필">
@@ -65,7 +65,7 @@
         <ul class="memo-grid" aria-label="작성된 메모"></ul>
         <div id="memo-empty-state" class="empty-state empty-state--memo" hidden>
           <div class="memo-empty-content">
-            <span class="memo-empty-icon" aria-hidden="true"></span>
+            <button id="memo-empty-create-button" class="memo-empty-icon" type="button" aria-label="새 메모 작성"></button>
             <h3>새로운 메모를 작성해보세요!</h3>
           </div>
         </div>
@@ -134,6 +134,31 @@
       </section>
     </dialog>
 
+    <dialog id="memo-create-success-dialog" class="memo-delete-dialog" aria-labelledby="memo-create-success-title" aria-describedby="memo-create-success-message">
+      <section class="memo-delete-content">
+        <div class="memo-delete-copy">
+          <h2 id="memo-create-success-title">작성이 완료되었습니다</h2>
+          <p id="memo-create-success-message">메인 화면에서 작성한 메모를 확인할 수 있어요.</p>
+        </div>
+        <footer class="memo-delete-actions">
+          <button id="memo-create-success-confirm-button" class="memo-delete-button memo-delete-button--confirm" type="button">확인</button>
+        </footer>
+      </section>
+    </dialog>
+
+    <dialog id="memo-create-exit-dialog" class="memo-delete-dialog" aria-labelledby="memo-create-exit-title" aria-describedby="memo-create-exit-message">
+      <section class="memo-delete-content">
+        <div class="memo-delete-copy">
+          <h2 id="memo-create-exit-title"></h2>
+          <p id="memo-create-exit-message">작성중이던 메모는 저장되지 않습니다.</p>
+        </div>
+        <footer class="memo-delete-actions">
+          <button id="memo-create-exit-cancel-button" class="memo-delete-button memo-delete-button--cancel" type="button">계속 작성하기</button>
+          <button id="memo-create-exit-confirm-button" class="memo-delete-button memo-delete-button--confirm" type="button"></button>
+        </footer>
+      </section>
+    </dialog>
+
     <dialog id="memo-editor-dialog" class="memo-editor-dialog" aria-label="메모 수정">
       <form id="memo-editor-form" class="memo-editor-form" novalidate>
         <div class="memo-editor-page">
@@ -151,6 +176,7 @@
                   <button id="memo-editor-category" class="memo-editor-category" type="button" aria-expanded="false" aria-controls="memo-editor-category-menu">
                     <span class="memo-editor-category-dot" aria-hidden="true"></span>
                     <span class="memo-editor-category-label">Daily</span>
+                    <img class="memo-editor-category-arrow" src="./assets/icons/tag-arrow.svg" alt="" hidden />
                   </button>
                   <div id="memo-editor-category-menu" class="memo-editor-category-menu" hidden>
                     <button type="button" data-editor-category="daily">Daily</button>

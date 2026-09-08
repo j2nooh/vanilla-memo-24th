@@ -11,6 +11,8 @@ const tagFilterLabel = document.querySelector('.tag-filter-label');
 const tagFilterIcon = document.querySelector('.tag-filter-icon');
 const tagFilterMenu = document.querySelector('#tag-filter-menu');
 const memoEmptyState = document.querySelector('#memo-empty-state');
+const memoCreateButton = document.querySelector('#memo-create-button');
+const memoEmptyCreateButton = document.querySelector('#memo-empty-create-button');
 const searchEmptyState = document.querySelector('#search-empty-state');
 const memoApp = document.querySelector('.memo-app');
 const memoDetailDialog = document.querySelector('#memo-detail-dialog');
@@ -26,12 +28,20 @@ const memoDeleteCancelButton = document.querySelector('#memo-delete-cancel-butto
 const memoDeleteConfirmButton = document.querySelector('#memo-delete-confirm-button');
 const memoDeleteSuccessDialog = document.querySelector('#memo-delete-success-dialog');
 const memoDeleteSuccessConfirmButton = document.querySelector('#memo-delete-success-confirm-button');
+const memoCreateSuccessDialog = document.querySelector('#memo-create-success-dialog');
+const memoCreateSuccessConfirmButton = document.querySelector('#memo-create-success-confirm-button');
+const memoCreateExitDialog = document.querySelector('#memo-create-exit-dialog');
+const memoCreateExitTitle = document.querySelector('#memo-create-exit-title');
+const memoCreateExitConfirmButton = document.querySelector('#memo-create-exit-confirm-button');
+const memoCreateExitCancelButton = document.querySelector('#memo-create-exit-cancel-button');
 const memoEditorDialog = document.querySelector('#memo-editor-dialog');
 const memoEditorForm = document.querySelector('#memo-editor-form');
 const memoEditorCard = document.querySelector('.memo-editor-card');
 const memoEditorTitle = document.querySelector('#memo-editor-title');
 const memoEditorCategory = document.querySelector('#memo-editor-category');
 const memoEditorCategoryLabel = document.querySelector('.memo-editor-category-label');
+const memoEditorCategoryDot = document.querySelector('.memo-editor-category-dot');
+const memoEditorCategoryArrow = document.querySelector('.memo-editor-category-arrow');
 const memoEditorCategorySelector = document.querySelector('.memo-editor-category-selector');
 const memoEditorCategoryMenu = document.querySelector('#memo-editor-category-menu');
 const memoEditorDate = document.querySelector('#memo-editor-date');
@@ -41,6 +51,7 @@ const memoEditorCancelButton = document.querySelector('#memo-editor-cancel-butto
 const memoEditorSubmitButton = document.querySelector('#memo-editor-submit-button');
 const memos = initialMemos.map((memo) => ({ ...memo }));
 let activeMemoId = null;
+let editorMode = null;
 const filterState = {
   keyword: '',
   category: '',
@@ -208,16 +219,30 @@ function openMemoDetail(memoId) {
 }
 
 function updateMemoEditorSubmitState() {
-  const isComplete = memoEditorTitle.value.trim().length > 0 && memoEditorContent.value.trim().length > 0;
+  const isComplete = memoEditorTitle.value.trim().length > 0
+    && memoEditorContent.value.trim().length > 0
+    && (editorMode !== 'create' || Boolean(memoEditorCategory.dataset.category));
 
   memoEditorSubmitButton.disabled = !isComplete;
 }
 
 function renderMemoEditorCategory(category) {
+  if (!category) {
+    memoEditorCard.className = 'memo-editor-card memo-editor-card--empty';
+    memoEditorCategory.className = 'memo-editor-category memo-editor-category--empty';
+    delete memoEditorCategory.dataset.category;
+    memoEditorCategoryLabel.textContent = '태그 선택';
+    memoEditorCategoryDot.hidden = true;
+    memoEditorCategoryArrow.hidden = false;
+    return;
+  }
+
   memoEditorCard.className = `memo-editor-card memo-editor-card--${category}`;
   memoEditorCategory.className = `memo-editor-category memo-editor-category--${category}`;
   memoEditorCategory.dataset.category = category;
   memoEditorCategoryLabel.textContent = categoryLabels[category];
+  memoEditorCategoryDot.hidden = false;
+  memoEditorCategoryArrow.hidden = true;
 }
 
 function closeMemoEditorCategoryMenu() {
@@ -232,6 +257,10 @@ function openMemoEditor() {
     return;
   }
 
+  editorMode = 'edit';
+  memoEditorDialog.setAttribute('aria-label', '메모 수정');
+  memoEditorCancelButton.textContent = '작성 취소';
+  memoEditorSubmitButton.textContent = '수정 완료';
   memoEditorTitle.value = targetMemo.title;
   memoEditorDate.value = targetMemo.date;
   renderMemoEditorCategory(targetMemo.category);
@@ -239,6 +268,22 @@ function openMemoEditor() {
   memoEditorContent.value = targetMemo.content;
   updateMemoEditorSubmitState();
   memoDetailDialog.close();
+  memoEditorDialog.showModal();
+  memoEditorTitle.focus();
+}
+
+function openMemoCreate() {
+  editorMode = 'create';
+  activeMemoId = null;
+  memoEditorDialog.setAttribute('aria-label', '메모 작성');
+  memoEditorCancelButton.textContent = '작성 취소';
+  memoEditorSubmitButton.textContent = '작성 완료';
+  memoEditorTitle.value = '';
+  memoEditorDate.value = new Date().toISOString().slice(0, 10);
+  memoEditorContent.value = '';
+  renderMemoEditorCategory();
+  closeMemoEditorCategoryMenu();
+  updateMemoEditorSubmitState();
   memoEditorDialog.showModal();
   memoEditorTitle.focus();
 }
@@ -281,10 +326,35 @@ function deleteActiveMemo() {
 function returnToMemoDetail() {
   closeMemoEditorCategoryMenu();
   memoEditorDialog.close();
+  editorMode = null;
 
   if (activeMemoId) {
     openMemoDetail(activeMemoId);
   }
+}
+
+function closeMemoEditorToMain() {
+  closeMemoEditorCategoryMenu();
+  memoEditorDialog.close();
+  activeMemoId = null;
+  editorMode = null;
+}
+
+function openMemoCreateExitDialog(action) {
+  memoCreateExitTitle.textContent = action === 'back'
+    ? '이전으로 돌아가시겠습니까?'
+    : '메모 작성을 그만 두시겠습니까?';
+  memoCreateExitConfirmButton.textContent = action === 'back' ? '돌아가기' : '작성 취소하기';
+  memoCreateExitDialog.showModal();
+}
+
+function requestMemoEditorExit(action) {
+  if (editorMode === 'create') {
+    openMemoCreateExitDialog(action);
+    return;
+  }
+
+  returnToMemoDetail();
 }
 
 function handleMemoEditorSubmit(event) {
@@ -292,8 +362,27 @@ function handleMemoEditorSubmit(event) {
 
   const title = memoEditorTitle.value.trim();
   const content = memoEditorContent.value.trim();
-  if (!title || !content) {
+  const category = memoEditorCategory.dataset.category;
+  if (!title || !content || (editorMode === 'create' && !category)) {
     updateMemoEditorSubmitState();
+    return;
+  }
+
+  if (editorMode === 'create') {
+    memos.unshift({
+      id: `memo-${Date.now()}`,
+      title,
+      content,
+      category,
+      date: memoEditorDate.value,
+      isPinned: false,
+    });
+    filterState.keyword = '';
+    filterState.category = '';
+    searchInput.value = '';
+    memoAnnouncement.textContent = '메모를 작성했습니다.';
+    updateFilterState();
+    memoCreateSuccessDialog.showModal();
     return;
   }
 
@@ -304,7 +393,7 @@ function handleMemoEditorSubmit(event) {
   }
 
   targetMemo.title = title;
-  targetMemo.category = memoEditorCategory.dataset.category;
+  targetMemo.category = category;
   targetMemo.date = memoEditorDate.value || targetMemo.date;
   targetMemo.content = content;
   memoAnnouncement.textContent = '메모를 수정했습니다.';
@@ -346,13 +435,13 @@ function handleMemoDetailClick(event) {
 
 function handleMemoEditorClick(event) {
   if (event.target === memoEditorDialog) {
-    returnToMemoDetail();
+    requestMemoEditorExit('back');
   }
 }
 
 function handleMemoEditorCancel(event) {
   event.preventDefault();
-  returnToMemoDetail();
+  requestMemoEditorExit('back');
 }
 
 function handleMemoEditorInput() {
@@ -374,6 +463,7 @@ function handleMemoEditorCategoryMenuClick(event) {
 
   renderMemoEditorCategory(categoryButton.dataset.editorCategory);
   closeMemoEditorCategoryMenu();
+  updateMemoEditorSubmitState();
 }
 
 function handleSearchInput() {
@@ -448,9 +538,22 @@ memoDeleteCancelButton.addEventListener('click', closeMemoDeleteDialog);
 memoDeleteConfirmButton.addEventListener('click', deleteActiveMemo);
 memoDeleteDialog.addEventListener('close', restoreMemoDetailBackdrop);
 memoDeleteSuccessConfirmButton.addEventListener('click', () => memoDeleteSuccessDialog.close());
+memoCreateButton.addEventListener('click', openMemoCreate);
+memoEmptyCreateButton.addEventListener('click', openMemoCreate);
+memoCreateSuccessConfirmButton.addEventListener('click', () => {
+  memoCreateSuccessDialog.close();
+  closeMemoEditorToMain();
+});
+memoCreateExitCancelButton.addEventListener('click', () => {
+  memoCreateExitDialog.close();
+});
+memoCreateExitConfirmButton.addEventListener('click', () => {
+  memoCreateExitDialog.close();
+  closeMemoEditorToMain();
+});
 memoEditorForm.addEventListener('submit', handleMemoEditorSubmit);
-memoEditorBackButton.addEventListener('click', returnToMemoDetail);
-memoEditorCancelButton.addEventListener('click', returnToMemoDetail);
+memoEditorBackButton.addEventListener('click', () => requestMemoEditorExit('back'));
+memoEditorCancelButton.addEventListener('click', () => requestMemoEditorExit('cancel'));
 memoEditorDialog.addEventListener('click', handleMemoEditorClick);
 memoEditorDialog.addEventListener('cancel', handleMemoEditorCancel);
 memoEditorTitle.addEventListener('input', handleMemoEditorInput);

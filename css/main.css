@@ -295,6 +295,7 @@ body {
   height: 120px;
   border-radius: 75px;
   background-color: #aac8ff;
+  cursor: pointer;
 }
 
 .memo-empty-icon::before,
@@ -665,7 +666,9 @@ body {
   background-color: rgb(0 27 81 / 50%);
 }
 
-#memo-delete-success-dialog::backdrop {
+#memo-delete-success-dialog::backdrop,
+#memo-create-success-dialog::backdrop,
+#memo-create-exit-dialog::backdrop {
   background-color: rgb(0 27 81 / 50%);
 }
 
@@ -807,6 +810,20 @@ body {
   background-color: var(--Gray-gray02);
 }
 
+.memo-editor-card--empty {
+  background-color: var(--Blue-blue01);
+}
+
+.memo-editor-card--empty .memo-editor-title,
+.memo-editor-card--empty .memo-editor-content {
+  color: var(--Blue-blue04);
+}
+
+.memo-editor-card--empty .memo-editor-title::placeholder,
+.memo-editor-card--empty .memo-editor-content::placeholder {
+  color: var(--color-memo-daily);
+}
+
 .memo-editor-title,
 .memo-editor-date,
 .memo-editor-content {
@@ -863,6 +880,15 @@ body {
   background-color: currentColor;
 }
 
+.memo-editor-category-arrow {
+  width: 13px;
+  height: 16px;
+}
+
+.memo-editor-category-arrow[hidden] {
+  display: none;
+}
+
 .memo-editor-category-selector {
   position: relative;
   flex: 0 0 auto;
@@ -911,6 +937,11 @@ body {
 .memo-editor-category--work,
 .memo-editor-category--others {
   background-color: var(--white00);
+}
+
+.memo-editor-category--empty {
+  background-color: #aac8ff;
+  color: var(--Blue-blue07);
 }
 
 .memo-editor-date {
