@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'Pretendard';
-  src: local('Pretendard Variable'), local('Pretendard');
+  src: url('../assets/fonts/PretendardVariable.woff2') format('woff2');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -9,7 +9,7 @@
 :root {
   /* Color System - Blue */
   --Blue-blue01: #dde9ff;
-  --Blue-blue02: #c5d9ff;
+  --Blue-blue02: #aac8ff;
   --Blue-blue03: #a2c1ff;
   --Blue-blue04: #5590ff;
   --Blue-blue05: #0055f5;
@@ -18,7 +18,7 @@
 
   /* Color System - Gray */
   --white00: #fafafa;
-  --Gray-gray01: #e0eeff;
+  --Gray-gray01: #e0e2e5;
   --Gray-gray02: #a6b7cb;
   --Gray-gray03: #677b93;
   --Gray-gray04: #485668;

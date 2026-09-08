@@ -1,0 +1,91 @@
+.memo-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.memo-grid[hidden] { display: none; }
+
+.memo-grid > li {
+  display: flex;
+  flex: 0 0 285px;
+}
+
+.memo-card {
+  display: flex;
+  width: 285px;
+  height: 285px;
+  flex-direction: column;
+  border-radius: 20px;
+  color: var(--white00);
+  cursor: pointer;
+}
+
+.memo-card-header {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  gap: 12px;
+}
+
+.memo-title {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  flex: 1;
+  font-size: var(--font-size-heading-small);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-heading-small);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pin-button {
+  display: block;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 auto;
+  margin-left: auto;
+  padding: 0;
+  background-color: var(--color-memo-star);
+  -webkit-mask: url('../assets/icons/star.svg') center / contain no-repeat;
+  mask: url('../assets/icons/star.svg') center / contain no-repeat;
+  cursor: pointer;
+}
+
+.pin-button[aria-pressed='true'] { background-color: var(--color-point); }
+
+.memo-content {
+  display: -webkit-box;
+  height: 141px;
+  margin-top: 12px;
+  overflow: hidden;
+  color: inherit;
+  font-size: var(--font-size-body-small);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-body-small);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 7;
+}
+
+.memo-card-footer {
+  display: flex;
+  margin-top: auto;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--white00);
+}
+
+.memo-category,
+.memo-date {
+  font-size: var(--font-size-body-small);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-body-small);
+}
+
+.memo-date { text-align: right; }
+.memo-card--daily { padding: 32px 20px; background-color: var(--color-memo-daily); }
+.memo-card--daily .memo-card-footer { color: var(--Blue-blue01); }
+.memo-card--work { padding: 32px 20px; background-color: var(--Blue-blue06); }
+.memo-card--others { padding: 32px 20px; background-color: var(--Gray-gray02); }

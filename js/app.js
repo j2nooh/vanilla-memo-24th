@@ -94,7 +94,7 @@ function loadMemos() {
 
     const parsedMemos = JSON.parse(storedMemos);
 
-    // 브라우저 저장값이 손상되어도 화면이 멈추지 않도록 초기 데이터로 복구합니다.
+    // 브라우저 저장값이 손상되어도 화면이 멈추지 않도록 초기 데이터로 복구한다.
     return Array.isArray(parsedMemos) && parsedMemos.every(isStoredMemo)
       ? parsedMemos
       : createInitialMemos();
