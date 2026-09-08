@@ -1,16 +1,28 @@
+html {
+  min-height: 100%;
+  background-color: var(--Blue-blue01);
+}
+
 body {
+  min-height: 100vh;
   color: var(--black00);
-  background-color: var(--white00);
+  background-color: var(--Blue-blue01);
 }
 
 .memo-app {
   display: flex;
   width: 1440px;
+  min-height: 100vh;
   padding: 72px 120px 86px;
   flex-direction: column;
   align-items: flex-start;
   gap: 76px;
   background-color: var(--Blue-blue01);
+}
+
+.memo-app--search-empty {
+  padding-bottom: 110px;
+  gap: 52px;
 }
 
 .memo-header,
@@ -43,6 +55,11 @@ body {
   background-color: var(--white00);
 }
 
+.tag-filter {
+  position: relative;
+  flex: 0 0 auto;
+}
+
 .search-input {
   flex: 1;
   min-width: 0;
@@ -52,6 +69,10 @@ body {
   background-color: transparent;
   font-size: var(--font-size-field-medium);
   line-height: var(--line-height-field-medium);
+}
+
+.search-input::-webkit-search-cancel-button {
+  appearance: none;
 }
 
 .search-input::placeholder {
@@ -69,7 +90,6 @@ body {
 
 .tag-filter-button {
   display: flex;
-  flex: 0 0 auto;
   width: 116px;
   height: 36px;
   padding: 6px 16px;
@@ -85,8 +105,108 @@ body {
   line-height: var(--line-height-action-small);
 }
 
+.tag-filter-button--selected {
+  justify-content: flex-start;
+}
+
+.tag-filter-button--daily {
+  padding: 4px 18px;
+  color: var(--Blue-blue04);
+}
+
+.tag-filter-button--work {
+  padding: 8px 18px;
+  color: var(--Blue-blue06);
+}
+
+.tag-filter-button--others {
+  padding: 4px 24px 4px 12px;
+  color: var(--Gray-gray03);
+}
+
+.tag-filter-label {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.tag-filter-dot {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
+
+.tag-filter-button--daily .tag-filter-dot {
+  background-color: var(--Blue-blue04);
+}
+
+.tag-filter-button--work .tag-filter-dot {
+  background-color: var(--Blue-blue06);
+}
+
+.tag-filter-button--others .tag-filter-dot {
+  background-color: var(--Gray-gray03);
+}
+
 .tag-filter-icon {
   flex-shrink: 0;
+}
+
+.tag-filter-icon[hidden] {
+  display: none;
+}
+
+.tag-filter-menu {
+  position: absolute;
+  z-index: 1;
+  top: calc(100% + 8px);
+  left: 0;
+  display: flex;
+  min-width: 116px;
+  padding: 8px;
+  flex-direction: column;
+  gap: 4px;
+  border-radius: 16px;
+  background-color: var(--white00);
+  box-shadow: 0 8px 24px rgb(0 27 81 / 16%);
+}
+
+.tag-filter-menu[hidden],
+.search-clear-button[hidden],
+.empty-state[hidden] {
+  display: none;
+}
+
+.tag-filter-menu button {
+  padding: 8px;
+  border-radius: 8px;
+  color: var(--Blue-blue07);
+  cursor: pointer;
+  text-align: left;
+}
+
+.tag-filter-menu button:hover {
+  background-color: var(--Blue-blue01);
+}
+
+.search-clear-button {
+  display: flex;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  color: var(--Blue-blue07);
+  cursor: pointer;
+}
+
+.search-clear-icon {
+  width: 24px;
+  height: 24px;
+  background-color: currentColor;
+  -webkit-mask: url('../assets/icons/close.svg') center / contain no-repeat;
+  mask: url('../assets/icons/close.svg') center / contain no-repeat;
 }
 
 .search-button {
@@ -109,8 +229,8 @@ body {
 }
 
 .search-button img {
-  width: 48px;
-  height: 48px;
+  width: 38.911px;
+  height: 38.911px;
 }
 
 .icon-button img {
@@ -128,6 +248,64 @@ body {
   gap: 10px;
   border: 2px dashed var(--Blue-blue02);
   border-radius: 24px;
+}
+
+.empty-state--search {
+  border-color: var(--Blue-blue07);
+  color: var(--Blue-blue07);
+}
+
+.search-empty-content {
+  display: flex;
+  width: 248px;
+  height: 164px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.search-empty-copy {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.empty-state--search h3 {
+  margin: 0;
+  font-size: var(--font-size-body-small);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-body-small);
+}
+
+.empty-state--search p {
+  margin: 0;
+  color: var(--Gray-gray03);
+  font-size: var(--font-size-body-small);
+  line-height: var(--line-height-body-small);
+  text-align: center;
+}
+
+.search-empty-icon {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  border-radius: 48px;
+  background-color: var(--Blue-blue07);
+}
+
+.search-empty-icon::after {
+  position: absolute;
+  width: 38.911px;
+  height: 38.911px;
+  inset: 0;
+  margin: auto;
+  content: '';
+  background-color: var(--Blue-blue01);
+  -webkit-mask: url('../assets/icons/search.svg') center / contain no-repeat;
+  mask: url('../assets/icons/search.svg') center / contain no-repeat;
 }
 
 .memo-grid {
