@@ -18,7 +18,22 @@ const memoDetailCategory = document.querySelector('#memo-detail-category');
 const memoDetailDate = document.querySelector('#memo-detail-date');
 const memoDetailBody = document.querySelector('#memo-detail-body');
 const memoDetailCloseButton = document.querySelector('#memo-detail-close-button');
+const memoDetailEditButton = document.querySelector('#memo-detail-edit-button');
+const memoEditorDialog = document.querySelector('#memo-editor-dialog');
+const memoEditorForm = document.querySelector('#memo-editor-form');
+const memoEditorCard = document.querySelector('.memo-editor-card');
+const memoEditorTitle = document.querySelector('#memo-editor-title');
+const memoEditorCategory = document.querySelector('#memo-editor-category');
+const memoEditorCategoryLabel = document.querySelector('.memo-editor-category-label');
+const memoEditorCategorySelector = document.querySelector('.memo-editor-category-selector');
+const memoEditorCategoryMenu = document.querySelector('#memo-editor-category-menu');
+const memoEditorDate = document.querySelector('#memo-editor-date');
+const memoEditorContent = document.querySelector('#memo-editor-content');
+const memoEditorBackButton = document.querySelector('#memo-editor-back-button');
+const memoEditorCancelButton = document.querySelector('#memo-editor-cancel-button');
+const memoEditorSubmitButton = document.querySelector('#memo-editor-submit-button');
 const memos = initialMemos.map((memo) => ({ ...memo }));
+let activeMemoId = null;
 const filterState = {
   keyword: '',
   category: '',
@@ -170,6 +185,7 @@ function openMemoDetail(memoId) {
     return;
   }
 
+  activeMemoId = memoId;
   memoDetailTitle.textContent = targetMemo.title;
   memoDetailCategory.textContent = categoryLabels[targetMemo.category];
   memoDetailCategory.className = `memo-detail-category memo-detail-category--${targetMemo.category}`;
@@ -178,6 +194,76 @@ function openMemoDetail(memoId) {
   memoDetailBody.textContent = targetMemo.content;
   memoDetailDialog.className = `memo-detail-dialog memo-detail-dialog--${targetMemo.category}`;
   memoDetailDialog.showModal();
+}
+
+function updateMemoEditorSubmitState() {
+  const isComplete = memoEditorTitle.value.trim().length > 0 && memoEditorContent.value.trim().length > 0;
+
+  memoEditorSubmitButton.disabled = !isComplete;
+}
+
+function renderMemoEditorCategory(category) {
+  memoEditorCard.className = `memo-editor-card memo-editor-card--${category}`;
+  memoEditorCategory.className = `memo-editor-category memo-editor-category--${category}`;
+  memoEditorCategory.dataset.category = category;
+  memoEditorCategoryLabel.textContent = categoryLabels[category];
+}
+
+function closeMemoEditorCategoryMenu() {
+  memoEditorCategoryMenu.hidden = true;
+  memoEditorCategory.setAttribute('aria-expanded', 'false');
+}
+
+function openMemoEditor() {
+  const targetMemo = memos.find((memo) => memo.id === activeMemoId);
+
+  if (!targetMemo) {
+    return;
+  }
+
+  memoEditorTitle.value = targetMemo.title;
+  memoEditorDate.value = targetMemo.date;
+  renderMemoEditorCategory(targetMemo.category);
+  closeMemoEditorCategoryMenu();
+  memoEditorContent.value = targetMemo.content;
+  updateMemoEditorSubmitState();
+  memoDetailDialog.close();
+  memoEditorDialog.showModal();
+  memoEditorTitle.focus();
+}
+
+function returnToMemoDetail() {
+  closeMemoEditorCategoryMenu();
+  memoEditorDialog.close();
+
+  if (activeMemoId) {
+    openMemoDetail(activeMemoId);
+  }
+}
+
+function handleMemoEditorSubmit(event) {
+  event.preventDefault();
+
+  const title = memoEditorTitle.value.trim();
+  const content = memoEditorContent.value.trim();
+  if (!title || !content) {
+    updateMemoEditorSubmitState();
+    return;
+  }
+
+  const targetMemo = memos.find((memo) => memo.id === activeMemoId);
+
+  if (!targetMemo) {
+    return;
+  }
+
+  targetMemo.title = title;
+  targetMemo.category = memoEditorCategory.dataset.category;
+  targetMemo.date = memoEditorDate.value || targetMemo.date;
+  targetMemo.content = content;
+  memoAnnouncement.textContent = '메모를 수정했습니다.';
+  renderMemos();
+  returnToMemoDetail();
 }
 
 function handleMemoGridClick(event) {
@@ -210,6 +296,38 @@ function handleMemoDetailClick(event) {
   if (event.target === memoDetailDialog) {
     memoDetailDialog.close();
   }
+}
+
+function handleMemoEditorClick(event) {
+  if (event.target === memoEditorDialog) {
+    returnToMemoDetail();
+  }
+}
+
+function handleMemoEditorCancel(event) {
+  event.preventDefault();
+  returnToMemoDetail();
+}
+
+function handleMemoEditorInput() {
+  updateMemoEditorSubmitState();
+}
+
+function handleMemoEditorCategoryChange() {
+  const isMenuOpen = !memoEditorCategoryMenu.hidden;
+  memoEditorCategoryMenu.hidden = isMenuOpen;
+  memoEditorCategory.setAttribute('aria-expanded', String(!isMenuOpen));
+}
+
+function handleMemoEditorCategoryMenuClick(event) {
+  const categoryButton = event.target.closest('[data-editor-category]');
+
+  if (!categoryButton) {
+    return;
+  }
+
+  renderMemoEditorCategory(categoryButton.dataset.editorCategory);
+  closeMemoEditorCategoryMenu();
 }
 
 function handleSearchInput() {
@@ -252,11 +370,16 @@ function handleDocumentClick(event) {
   if (!tagFilter.contains(event.target)) {
     closeTagFilterMenu();
   }
+
+  if (!memoEditorCategorySelector.contains(event.target)) {
+    closeMemoEditorCategoryMenu();
+  }
 }
 
 function handleDocumentKeydown(event) {
   if (event.key === 'Escape') {
     closeTagFilterMenu();
+    closeMemoEditorCategoryMenu();
   }
 }
 
@@ -272,5 +395,15 @@ tagFilterMenu.addEventListener('click', handleTagFilterMenuClick);
 document.addEventListener('click', handleDocumentClick);
 document.addEventListener('keydown', handleDocumentKeydown);
 memoDetailCloseButton.addEventListener('click', () => memoDetailDialog.close());
+memoDetailEditButton.addEventListener('click', openMemoEditor);
 memoDetailDialog.addEventListener('click', handleMemoDetailClick);
+memoEditorForm.addEventListener('submit', handleMemoEditorSubmit);
+memoEditorBackButton.addEventListener('click', returnToMemoDetail);
+memoEditorCancelButton.addEventListener('click', returnToMemoDetail);
+memoEditorDialog.addEventListener('click', handleMemoEditorClick);
+memoEditorDialog.addEventListener('cancel', handleMemoEditorCancel);
+memoEditorTitle.addEventListener('input', handleMemoEditorInput);
+memoEditorContent.addEventListener('input', handleMemoEditorInput);
+memoEditorCategory.addEventListener('click', handleMemoEditorCategoryChange);
+memoEditorCategoryMenu.addEventListener('click', handleMemoEditorCategoryMenuClick);
 updateFilterState();

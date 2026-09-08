@@ -93,7 +93,7 @@
           <p id="memo-detail-body" class="memo-detail-body"></p>
         </div>
         <footer class="memo-detail-actions">
-          <button class="memo-detail-action-button" type="button" aria-label="메모 수정">
+          <button id="memo-detail-edit-button" class="memo-detail-action-button" type="button" aria-label="메모 수정">
             <img src="./assets/icons/modify.svg" alt="" />
           </button>
           <button class="memo-detail-action-button" type="button" aria-label="메모 삭제">
@@ -101,6 +101,47 @@
           </button>
         </footer>
       </article>
+    </dialog>
+
+    <dialog id="memo-editor-dialog" class="memo-editor-dialog" aria-label="메모 수정">
+      <form id="memo-editor-form" class="memo-editor-form" novalidate>
+        <div class="memo-editor-page">
+          <button id="memo-editor-back-button" class="memo-editor-back-button" type="button">
+            <img src="./assets/icons/back.svg" alt="" />
+            <span class="visually-hidden">상세 메모로 돌아가기</span>
+          </button>
+
+          <div class="memo-editor-layout">
+            <section class="memo-editor-card">
+              <input id="memo-editor-title" class="memo-editor-title" name="title" type="text" maxlength="40" placeholder="제목을 입력하세요..." aria-required="true" />
+
+              <div class="memo-editor-meta">
+                <div class="memo-editor-category-selector">
+                  <button id="memo-editor-category" class="memo-editor-category" type="button" aria-expanded="false" aria-controls="memo-editor-category-menu">
+                    <span class="memo-editor-category-dot" aria-hidden="true"></span>
+                    <span class="memo-editor-category-label">Daily</span>
+                  </button>
+                  <div id="memo-editor-category-menu" class="memo-editor-category-menu" hidden>
+                    <button type="button" data-editor-category="daily">Daily</button>
+                    <button type="button" data-editor-category="work">Work</button>
+                    <button type="button" data-editor-category="others">Others</button>
+                  </div>
+                </div>
+                <img class="memo-editor-divider" src="./assets/icons/bar.svg" alt="" />
+                <label class="visually-hidden" for="memo-editor-date">날짜</label>
+                <input id="memo-editor-date" class="memo-editor-date" name="date" type="date" />
+              </div>
+
+              <textarea id="memo-editor-content" class="memo-editor-content" name="content" placeholder="본문을 입력하세요..." aria-required="true"></textarea>
+            </section>
+
+            <footer class="memo-editor-actions">
+              <button id="memo-editor-cancel-button" class="memo-editor-button memo-editor-button--cancel" type="button">작성 취소</button>
+              <button id="memo-editor-submit-button" class="memo-editor-button memo-editor-button--submit" type="submit">수정 완료</button>
+            </footer>
+          </div>
+        </div>
+      </form>
     </dialog>
 
     <script type="module" src="./js/app.js"></script>
