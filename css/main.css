@@ -337,19 +337,25 @@ body {
   display: flex;
   align-items: center;
   align-self: stretch;
-  gap: 64px;
+  gap: 12px;
 }
 
 .memo-title {
+  min-width: 0;
   margin: 0;
+  overflow: hidden;
+  flex: 1;
   font-size: var(--font-size-heading-small);
   font-weight: var(--font-weight-bold);
   line-height: var(--line-height-heading-small);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .pin-button {
   display: block;
   flex: 0 0 auto;
+  margin-left: auto;
   width: 28px;
   height: 28px;
   padding: 0;
@@ -581,6 +587,83 @@ body {
 
 .memo-detail-dialog--others {
   background-color: var(--Gray-gray02);
+}
+
+.memo-delete-dialog {
+  width: 480px;
+  height: 240px;
+  padding: 48px 32px 24px;
+  border: 0;
+  border-radius: 24px;
+  background-color: var(--white00);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 25%);
+}
+
+.memo-delete-dialog::backdrop {
+  background-color: rgb(0 27 81 / 50%);
+}
+
+.memo-delete-content {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.memo-delete-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.memo-delete-copy h2 {
+  margin: 0;
+  color: var(--Blue-blue07);
+  font-size: var(--font-size-heading-medium);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-heading-medium);
+  text-align: center;
+}
+
+.memo-delete-copy p {
+  margin: 0;
+  color: var(--Gray-gray04);
+  font-size: var(--font-size-body-small);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-body-small);
+  text-align: center;
+}
+
+.memo-delete-actions {
+  display: flex;
+  width: 100%;
+  gap: 12px;
+}
+
+.memo-delete-button {
+  display: flex;
+  height: 56px;
+  padding: 12px 24px;
+  flex: 1 0 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: var(--font-size-action-small);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-action-small);
+}
+
+.memo-delete-button--cancel {
+  color: var(--Gray-gray03);
+  background-color: #e0e2e5;
+}
+
+.memo-delete-button--confirm {
+  color: var(--white00);
+  background-color: var(--Blue-blue05);
 }
 
 .memo-editor-dialog {

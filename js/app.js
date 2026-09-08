@@ -19,6 +19,12 @@ const memoDetailDate = document.querySelector('#memo-detail-date');
 const memoDetailBody = document.querySelector('#memo-detail-body');
 const memoDetailCloseButton = document.querySelector('#memo-detail-close-button');
 const memoDetailEditButton = document.querySelector('#memo-detail-edit-button');
+const memoDetailDeleteButton = document.querySelector('#memo-detail-delete-button');
+const memoDeleteDialog = document.querySelector('#memo-delete-dialog');
+const memoDeleteCancelButton = document.querySelector('#memo-delete-cancel-button');
+const memoDeleteConfirmButton = document.querySelector('#memo-delete-confirm-button');
+const memoDeleteSuccessDialog = document.querySelector('#memo-delete-success-dialog');
+const memoDeleteSuccessConfirmButton = document.querySelector('#memo-delete-success-confirm-button');
 const memoEditorDialog = document.querySelector('#memo-editor-dialog');
 const memoEditorForm = document.querySelector('#memo-editor-form');
 const memoEditorCard = document.querySelector('.memo-editor-card');
@@ -232,6 +238,35 @@ function openMemoEditor() {
   memoEditorTitle.focus();
 }
 
+function openMemoDeleteDialog() {
+  if (!activeMemoId) {
+    return;
+  }
+
+  memoDeleteDialog.showModal();
+}
+
+function closeMemoDeleteDialog() {
+  memoDeleteDialog.close();
+}
+
+function deleteActiveMemo() {
+  const targetIndex = memos.findIndex((memo) => memo.id === activeMemoId);
+
+  if (targetIndex === -1) {
+    closeMemoDeleteDialog();
+    return;
+  }
+
+  memos.splice(targetIndex, 1);
+  memoAnnouncement.textContent = '메모를 삭제했습니다.';
+  renderMemos();
+  closeMemoDeleteDialog();
+  memoDetailDialog.close();
+  activeMemoId = null;
+  memoDeleteSuccessDialog.showModal();
+}
+
 function returnToMemoDetail() {
   closeMemoEditorCategoryMenu();
   memoEditorDialog.close();
@@ -396,7 +431,11 @@ document.addEventListener('click', handleDocumentClick);
 document.addEventListener('keydown', handleDocumentKeydown);
 memoDetailCloseButton.addEventListener('click', () => memoDetailDialog.close());
 memoDetailEditButton.addEventListener('click', openMemoEditor);
+memoDetailDeleteButton.addEventListener('click', openMemoDeleteDialog);
 memoDetailDialog.addEventListener('click', handleMemoDetailClick);
+memoDeleteCancelButton.addEventListener('click', closeMemoDeleteDialog);
+memoDeleteConfirmButton.addEventListener('click', deleteActiveMemo);
+memoDeleteSuccessConfirmButton.addEventListener('click', () => memoDeleteSuccessDialog.close());
 memoEditorForm.addEventListener('submit', handleMemoEditorSubmit);
 memoEditorBackButton.addEventListener('click', returnToMemoDetail);
 memoEditorCancelButton.addEventListener('click', returnToMemoDetail);

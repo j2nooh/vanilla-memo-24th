@@ -96,11 +96,36 @@
           <button id="memo-detail-edit-button" class="memo-detail-action-button" type="button" aria-label="메모 수정">
             <img src="./assets/icons/modify.svg" alt="" />
           </button>
-          <button class="memo-detail-action-button" type="button" aria-label="메모 삭제">
+          <button id="memo-detail-delete-button" class="memo-detail-action-button" type="button" aria-label="메모 삭제">
             <img src="./assets/icons/delete.svg" alt="" />
           </button>
         </footer>
       </article>
+    </dialog>
+
+    <dialog id="memo-delete-dialog" class="memo-delete-dialog" aria-labelledby="memo-delete-title" aria-describedby="memo-delete-message">
+      <section class="memo-delete-content">
+        <div class="memo-delete-copy">
+          <h2 id="memo-delete-title">메모를 삭제 하시겠습니까?</h2>
+          <p id="memo-delete-message">삭제된 메모는 휴지통에서 확인 가능합니다.</p>
+        </div>
+        <footer class="memo-delete-actions">
+          <button id="memo-delete-cancel-button" class="memo-delete-button memo-delete-button--cancel" type="button">취소</button>
+          <button id="memo-delete-confirm-button" class="memo-delete-button memo-delete-button--confirm" type="button">삭제</button>
+        </footer>
+      </section>
+    </dialog>
+
+    <dialog id="memo-delete-success-dialog" class="memo-delete-dialog" aria-labelledby="memo-delete-success-title" aria-describedby="memo-delete-success-message">
+      <section class="memo-delete-content">
+        <div class="memo-delete-copy">
+          <h2 id="memo-delete-success-title">해당 메모가 삭제되었습니다</h2>
+          <p id="memo-delete-success-message">삭제된 메모는 휴지통에서 확인 가능합니다.</p>
+        </div>
+        <footer class="memo-delete-actions">
+          <button id="memo-delete-success-confirm-button" class="memo-delete-button memo-delete-button--confirm" type="button">확인</button>
+        </footer>
+      </section>
     </dialog>
 
     <dialog id="memo-editor-dialog" class="memo-editor-dialog" aria-label="메모 수정">
