@@ -27,9 +27,13 @@ const memoDeleteDialog = document.querySelector('#memo-delete-dialog');
 const memoDeleteCancelButton = document.querySelector('#memo-delete-cancel-button');
 const memoDeleteConfirmButton = document.querySelector('#memo-delete-confirm-button');
 const memoDeleteSuccessDialog = document.querySelector('#memo-delete-success-dialog');
-const memoDeleteSuccessConfirmButton = document.querySelector('#memo-delete-success-confirm-button');
+const memoDeleteSuccessConfirmButton = document.querySelector(
+  '#memo-delete-success-confirm-button',
+);
 const memoCreateSuccessDialog = document.querySelector('#memo-create-success-dialog');
-const memoCreateSuccessConfirmButton = document.querySelector('#memo-create-success-confirm-button');
+const memoCreateSuccessConfirmButton = document.querySelector(
+  '#memo-create-success-confirm-button',
+);
 const memoCreateExitDialog = document.querySelector('#memo-create-exit-dialog');
 const memoCreateExitTitle = document.querySelector('#memo-create-exit-title');
 const memoCreateExitConfirmButton = document.querySelector('#memo-create-exit-confirm-button');
@@ -49,7 +53,8 @@ const memoEditorContent = document.querySelector('#memo-editor-content');
 const memoEditorBackButton = document.querySelector('#memo-editor-back-button');
 const memoEditorCancelButton = document.querySelector('#memo-editor-cancel-button');
 const memoEditorSubmitButton = document.querySelector('#memo-editor-submit-button');
-const memos = initialMemos.map((memo) => ({ ...memo }));
+const memoStorageKey = 'vanilla-memo-memos';
+const validCategories = ['daily', 'work', 'others'];
 let activeMemoId = null;
 let editorMode = null;
 const filterState = {
@@ -62,6 +67,51 @@ const categoryLabels = {
   work: 'Work',
   others: 'Others',
 };
+
+function createInitialMemos() {
+  return initialMemos.map((memo) => ({ ...memo }));
+}
+
+function isStoredMemo(memo) {
+  return (
+    memo &&
+    typeof memo.id === 'string' &&
+    typeof memo.title === 'string' &&
+    typeof memo.content === 'string' &&
+    validCategories.includes(memo.category) &&
+    typeof memo.date === 'string' &&
+    typeof memo.isPinned === 'boolean'
+  );
+}
+
+function loadMemos() {
+  try {
+    const storedMemos = localStorage.getItem(memoStorageKey);
+
+    if (!storedMemos) {
+      return createInitialMemos();
+    }
+
+    const parsedMemos = JSON.parse(storedMemos);
+
+    // 브라우저 저장값이 손상되어도 화면이 멈추지 않도록 초기 데이터로 복구합니다.
+    return Array.isArray(parsedMemos) && parsedMemos.every(isStoredMemo)
+      ? parsedMemos
+      : createInitialMemos();
+  } catch {
+    return createInitialMemos();
+  }
+}
+
+function saveMemos() {
+  try {
+    localStorage.setItem(memoStorageKey, JSON.stringify(memos));
+  } catch {
+    // 브라우저 저장소를 사용할 수 없어도 현재 화면은 계속 사용할 수 있다.
+  }
+}
+
+const memos = loadMemos();
 
 function formatDate(date) {
   return date.replaceAll('-', '.');
@@ -194,6 +244,7 @@ function toggleMemoPin(memoId) {
   }
 
   targetMemo.isPinned = !targetMemo.isPinned;
+  saveMemos();
   memoAnnouncement.textContent = targetMemo.isPinned
     ? '메모를 고정했습니다.'
     : '메모 고정을 해제했습니다.';
@@ -219,9 +270,10 @@ function openMemoDetail(memoId) {
 }
 
 function updateMemoEditorSubmitState() {
-  const isComplete = memoEditorTitle.value.trim().length > 0
-    && memoEditorContent.value.trim().length > 0
-    && (editorMode !== 'create' || Boolean(memoEditorCategory.dataset.category));
+  const isComplete =
+    memoEditorTitle.value.trim().length > 0 &&
+    memoEditorContent.value.trim().length > 0 &&
+    (editorMode !== 'create' || Boolean(memoEditorCategory.dataset.category));
 
   memoEditorSubmitButton.disabled = !isComplete;
 }
@@ -315,6 +367,7 @@ function deleteActiveMemo() {
   }
 
   memos.splice(targetIndex, 1);
+  saveMemos();
   memoAnnouncement.textContent = '메모를 삭제했습니다.';
   renderMemos();
   closeMemoDeleteDialog();
@@ -341,9 +394,8 @@ function closeMemoEditorToMain() {
 }
 
 function openMemoCreateExitDialog(action) {
-  memoCreateExitTitle.textContent = action === 'back'
-    ? '이전으로 돌아가시겠습니까?'
-    : '메모 작성을 그만 두시겠습니까?';
+  memoCreateExitTitle.textContent =
+    action === 'back' ? '이전으로 돌아가시겠습니까?' : '메모 작성을 그만 두시겠습니까?';
   memoCreateExitConfirmButton.textContent = action === 'back' ? '돌아가기' : '작성 취소하기';
   memoCreateExitDialog.showModal();
 }
@@ -377,6 +429,7 @@ function handleMemoEditorSubmit(event) {
       date: memoEditorDate.value,
       isPinned: false,
     });
+    saveMemos();
     filterState.keyword = '';
     filterState.category = '';
     searchInput.value = '';
@@ -396,6 +449,7 @@ function handleMemoEditorSubmit(event) {
   targetMemo.category = category;
   targetMemo.date = memoEditorDate.value || targetMemo.date;
   targetMemo.content = content;
+  saveMemos();
   memoAnnouncement.textContent = '메모를 수정했습니다.';
   renderMemos();
   returnToMemoDetail();
