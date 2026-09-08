@@ -10,7 +10,7 @@ body {
   flex-direction: column;
   align-items: flex-start;
   gap: 76px;
-  background-color: var(--Blue-blue01, #e4edff);
+  background-color: var(--Blue-blue01);
 }
 
 .memo-header,
@@ -159,13 +159,19 @@ body {
 }
 
 .pin-button {
+  display: block;
   flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background-color: var(--color-memo-star);
+  -webkit-mask: url('../assets/icons/star.svg') center / contain no-repeat;
+  mask: url('../assets/icons/star.svg') center / contain no-repeat;
   cursor: pointer;
 }
 
-.pin-button img {
-  width: 28px;
-  height: 28px;
+.pin-button[aria-pressed='true'] {
+  background-color: var(--color-point);
 }
 
 .memo-content {
