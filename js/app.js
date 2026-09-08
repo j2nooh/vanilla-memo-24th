@@ -10,6 +10,7 @@ const tagFilterButton = document.querySelector('#tag-filter-button');
 const tagFilterLabel = document.querySelector('.tag-filter-label');
 const tagFilterIcon = document.querySelector('.tag-filter-icon');
 const tagFilterMenu = document.querySelector('#tag-filter-menu');
+const memoEmptyState = document.querySelector('#memo-empty-state');
 const searchEmptyState = document.querySelector('#search-empty-state');
 const memoApp = document.querySelector('.memo-app');
 const memoDetailDialog = document.querySelector('#memo-detail-dialog');
@@ -122,13 +123,17 @@ function renderMemos() {
   const visibleMemos = getVisibleMemos();
   const pinnedMemos = visibleMemos.filter((memo) => memo.isPinned);
   const unpinnedMemos = visibleMemos.filter((memo) => !memo.isPinned);
+  const hasNoMemos = memos.length === 0;
+  const hasNoSearchResults = !hasNoMemos && visibleMemos.length === 0;
 
   renderMemoGrid(pinnedMemoGrid, pinnedMemos);
   renderMemoGrid(unpinnedMemoGrid, unpinnedMemos);
   pinnedMemoGrid.hidden = pinnedMemos.length === 0;
   unpinnedMemoGrid.hidden = unpinnedMemos.length === 0;
-  searchEmptyState.hidden = visibleMemos.length !== 0;
-  memoApp.classList.toggle('memo-app--search-empty', visibleMemos.length === 0);
+  memoEmptyState.hidden = !hasNoMemos;
+  searchEmptyState.hidden = !hasNoSearchResults;
+  memoApp.classList.toggle('memo-app--search-empty', hasNoSearchResults);
+  memoApp.classList.toggle('memo-app--memo-empty', hasNoMemos);
 }
 
 function renderTagFilterButton() {
@@ -243,11 +248,17 @@ function openMemoDeleteDialog() {
     return;
   }
 
+  memoDetailDialog.classList.add('memo-detail-dialog--delete-confirmation');
   memoDeleteDialog.showModal();
 }
 
 function closeMemoDeleteDialog() {
   memoDeleteDialog.close();
+  memoDetailDialog.classList.remove('memo-detail-dialog--delete-confirmation');
+}
+
+function restoreMemoDetailBackdrop() {
+  memoDetailDialog.classList.remove('memo-detail-dialog--delete-confirmation');
 }
 
 function deleteActiveMemo() {
@@ -435,6 +446,7 @@ memoDetailDeleteButton.addEventListener('click', openMemoDeleteDialog);
 memoDetailDialog.addEventListener('click', handleMemoDetailClick);
 memoDeleteCancelButton.addEventListener('click', closeMemoDeleteDialog);
 memoDeleteConfirmButton.addEventListener('click', deleteActiveMemo);
+memoDeleteDialog.addEventListener('close', restoreMemoDetailBackdrop);
 memoDeleteSuccessConfirmButton.addEventListener('click', () => memoDeleteSuccessDialog.close());
 memoEditorForm.addEventListener('submit', handleMemoEditorSubmit);
 memoEditorBackButton.addEventListener('click', returnToMemoDetail);

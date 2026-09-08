@@ -25,6 +25,21 @@ body {
   gap: 52px;
 }
 
+.memo-app--memo-empty {
+  height: 100vh;
+  min-height: 0;
+}
+
+.memo-app--memo-empty .memo-section {
+  flex: 1;
+  min-height: 0;
+}
+
+.memo-app--memo-empty .empty-state--memo {
+  width: min(1200px, 100%);
+  height: 100%;
+}
+
 .memo-header,
 .memo-section {
   width: 100%;
@@ -255,6 +270,49 @@ body {
   color: var(--Blue-blue07);
 }
 
+.empty-state--memo {
+  border-color: #aac8ff;
+}
+
+.memo-empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  color: #aac8ff;
+}
+
+.memo-empty-content h3 {
+  margin: 0;
+  font-size: var(--font-size-heading-medium);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-heading-medium);
+}
+
+.memo-empty-icon {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 75px;
+  background-color: #aac8ff;
+}
+
+.memo-empty-icon::before,
+.memo-empty-icon::after {
+  position: absolute;
+  width: 32.727px;
+  height: 5.455px;
+  border-radius: 3px;
+  inset: 0;
+  margin: auto;
+  content: '';
+  background-color: #e0e2e5;
+}
+
+.memo-empty-icon::after {
+  transform: rotate(90deg);
+}
+
 .search-empty-content {
   display: flex;
   width: 248px;
@@ -435,6 +493,10 @@ body {
   background-color: rgb(0 27 81 / 50%);
 }
 
+.memo-detail-dialog--delete-confirmation::backdrop {
+  background-color: transparent;
+}
+
 .memo-detail-content {
   display: flex;
   height: 100%;
@@ -599,7 +661,11 @@ body {
   box-shadow: 0 8px 24px rgb(0 0 0 / 25%);
 }
 
-.memo-delete-dialog::backdrop {
+#memo-delete-dialog::backdrop {
+  background-color: rgb(0 27 81 / 50%);
+}
+
+#memo-delete-success-dialog::backdrop {
   background-color: rgb(0 27 81 / 50%);
 }
 
