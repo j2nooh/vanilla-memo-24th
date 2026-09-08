@@ -1,6 +1,6 @@
 import { initialMemos } from './data.js';
 
-const memoGrid = document.querySelector('.memo-grid');
+const [pinnedMemoGrid, unpinnedMemoGrid] = document.querySelectorAll('.memo-grid');
 const memoAnnouncement = document.querySelector('#memo-announcement');
 const memos = initialMemos.map((memo) => ({ ...memo }));
 
@@ -12,13 +12,6 @@ const categoryLabels = {
 
 function formatDate(date) {
   return date.replaceAll('-', '.');
-}
-
-function getSortedMemos() {
-  const pinnedMemos = memos.filter((memo) => memo.isPinned);
-  const unpinnedMemos = memos.filter((memo) => !memo.isPinned);
-
-  return [...pinnedMemos, ...unpinnedMemos];
 }
 
 function createMemoCard(memo) {
@@ -60,14 +53,23 @@ function createMemoCard(memo) {
   return listItem;
 }
 
-function renderMemos() {
+function renderMemoGrid(memoGrid, memoList) {
   const memoFragment = document.createDocumentFragment();
 
-  getSortedMemos().forEach((memo) => {
+  memoList.forEach((memo) => {
     memoFragment.append(createMemoCard(memo));
   });
 
   memoGrid.replaceChildren(memoFragment);
+}
+
+function renderMemos() {
+  const pinnedMemos = memos.filter((memo) => memo.isPinned);
+  const unpinnedMemos = memos.filter((memo) => !memo.isPinned);
+
+  renderMemoGrid(pinnedMemoGrid, pinnedMemos);
+  renderMemoGrid(unpinnedMemoGrid, unpinnedMemos);
+  pinnedMemoGrid.hidden = pinnedMemos.length === 0;
 }
 
 function toggleMemoPin(memoId) {
@@ -94,5 +96,6 @@ function handleMemoGridClick(event) {
   toggleMemoPin(pinButton.dataset.memoId);
 }
 
-memoGrid.addEventListener('click', handleMemoGridClick);
+pinnedMemoGrid.addEventListener('click', handleMemoGridClick);
+unpinnedMemoGrid.addEventListener('click', handleMemoGridClick);
 renderMemos();

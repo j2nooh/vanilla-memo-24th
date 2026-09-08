@@ -18,6 +18,12 @@ body {
   width: 100%;
 }
 
+.memo-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 /* Flexbox로 검색창과 버튼 가로 정렬 */
 .memo-header {
   display: flex;
@@ -130,6 +136,10 @@ body {
   gap: 20px;
 }
 
+.memo-grid[hidden] {
+  display: none;
+}
+
 .memo-grid > li {
   display: flex;
   flex: 0 0 285px;
@@ -222,13 +232,8 @@ body {
 }
 
 .memo-card--others {
-  padding: 25px 34px 36px 21px;
+  padding: 32px 20px;
   background-color: var(--Gray-gray02);
-}
-
-.memo-card--others .memo-card-header {
-  justify-content: space-between;
-  gap: 0;
 }
 
 .visually-hidden {
