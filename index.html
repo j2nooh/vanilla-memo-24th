@@ -74,6 +74,35 @@
         </div>
       </section>
     </main>
+
+    <dialog id="memo-detail-dialog" class="memo-detail-dialog" aria-labelledby="memo-detail-title">
+      <article class="memo-detail-content">
+        <header class="memo-detail-header">
+          <h2 id="memo-detail-title"></h2>
+          <button id="memo-detail-close-button" class="memo-detail-close-button" type="button">
+            <img src="./assets/icons/exit.svg" alt="" />
+            <span class="visually-hidden">상세 메모 닫기</span>
+          </button>
+        </header>
+        <div class="memo-detail-main">
+          <div class="memo-detail-meta">
+            <span id="memo-detail-category" class="memo-detail-category"></span>
+            <img class="memo-detail-divider" src="./assets/icons/bar.svg" alt="" />
+            <time id="memo-detail-date"></time>
+          </div>
+          <p id="memo-detail-body" class="memo-detail-body"></p>
+        </div>
+        <footer class="memo-detail-actions">
+          <button class="memo-detail-action-button" type="button" aria-label="메모 수정">
+            <img src="./assets/icons/modify.svg" alt="" />
+          </button>
+          <button class="memo-detail-action-button" type="button" aria-label="메모 삭제">
+            <img src="./assets/icons/delete.svg" alt="" />
+          </button>
+        </footer>
+      </article>
+    </dialog>
+
     <script type="module" src="./js/app.js"></script>
   </body>
 </html>

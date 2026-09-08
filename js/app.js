@@ -12,6 +12,12 @@ const tagFilterIcon = document.querySelector('.tag-filter-icon');
 const tagFilterMenu = document.querySelector('#tag-filter-menu');
 const searchEmptyState = document.querySelector('#search-empty-state');
 const memoApp = document.querySelector('.memo-app');
+const memoDetailDialog = document.querySelector('#memo-detail-dialog');
+const memoDetailTitle = document.querySelector('#memo-detail-title');
+const memoDetailCategory = document.querySelector('#memo-detail-category');
+const memoDetailDate = document.querySelector('#memo-detail-date');
+const memoDetailBody = document.querySelector('#memo-detail-body');
+const memoDetailCloseButton = document.querySelector('#memo-detail-close-button');
 const memos = initialMemos.map((memo) => ({ ...memo }));
 const filterState = {
   keyword: '',
@@ -52,6 +58,8 @@ function createMemoCard(memo) {
   const memoDate = document.createElement('time');
 
   memoCard.className = `memo-card memo-card--${memo.category}`;
+  memoCard.dataset.memoId = memo.id;
+  memoCard.tabIndex = 0;
   memoHeader.className = 'memo-card-header';
   memoTitle.className = 'memo-title';
   pinButton.className = 'pin-button';
@@ -155,14 +163,53 @@ function toggleMemoPin(memoId) {
   renderMemos();
 }
 
-function handleMemoGridClick(event) {
-  const pinButton = event.target.closest('.pin-button');
+function openMemoDetail(memoId) {
+  const targetMemo = memos.find((memo) => memo.id === memoId);
 
-  if (!pinButton) {
+  if (!targetMemo) {
     return;
   }
 
-  toggleMemoPin(pinButton.dataset.memoId);
+  memoDetailTitle.textContent = targetMemo.title;
+  memoDetailCategory.textContent = categoryLabels[targetMemo.category];
+  memoDetailCategory.className = `memo-detail-category memo-detail-category--${targetMemo.category}`;
+  memoDetailDate.dateTime = targetMemo.date;
+  memoDetailDate.textContent = formatDate(targetMemo.date);
+  memoDetailBody.textContent = targetMemo.content;
+  memoDetailDialog.className = `memo-detail-dialog memo-detail-dialog--${targetMemo.category}`;
+  memoDetailDialog.showModal();
+}
+
+function handleMemoGridClick(event) {
+  const pinButton = event.target.closest('.pin-button');
+
+  if (pinButton) {
+    toggleMemoPin(pinButton.dataset.memoId);
+    return;
+  }
+
+  const memoCard = event.target.closest('.memo-card');
+
+  if (memoCard) {
+    openMemoDetail(memoCard.dataset.memoId);
+  }
+}
+
+function handleMemoGridKeydown(event) {
+  const memoCard = event.target.closest('.memo-card');
+
+  if (event.target.closest('.pin-button') || !memoCard || !['Enter', ' '].includes(event.key)) {
+    return;
+  }
+
+  event.preventDefault();
+  openMemoDetail(memoCard.dataset.memoId);
+}
+
+function handleMemoDetailClick(event) {
+  if (event.target === memoDetailDialog) {
+    memoDetailDialog.close();
+  }
 }
 
 function handleSearchInput() {
@@ -215,6 +262,8 @@ function handleDocumentKeydown(event) {
 
 pinnedMemoGrid.addEventListener('click', handleMemoGridClick);
 unpinnedMemoGrid.addEventListener('click', handleMemoGridClick);
+pinnedMemoGrid.addEventListener('keydown', handleMemoGridKeydown);
+unpinnedMemoGrid.addEventListener('keydown', handleMemoGridKeydown);
 searchInput.addEventListener('input', handleSearchInput);
 searchForm.addEventListener('submit', handleSearchSubmit);
 searchClearButton.addEventListener('click', handleSearchClear);
@@ -222,4 +271,6 @@ tagFilterButton.addEventListener('click', handleTagFilterButtonClick);
 tagFilterMenu.addEventListener('click', handleTagFilterMenuClick);
 document.addEventListener('click', handleDocumentClick);
 document.addEventListener('keydown', handleDocumentKeydown);
+memoDetailCloseButton.addEventListener('click', () => memoDetailDialog.close());
+memoDetailDialog.addEventListener('click', handleMemoDetailClick);
 updateFilterState();
