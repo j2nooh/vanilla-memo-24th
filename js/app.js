@@ -1,4 +1,5 @@
-import { initialMemos } from './data.js';
+import { loadMemos, saveMemos } from './memo-store.js';
+import { categoryLabels, formatDate, renderMemoGrid, renderTagFilterButton } from './memo-view.js';
 
 const [pinnedMemoGrid, unpinnedMemoGrid] = document.querySelectorAll('.memo-grid');
 const memoAnnouncement = document.querySelector('#memo-announcement');
@@ -53,8 +54,6 @@ const memoEditorContent = document.querySelector('#memo-editor-content');
 const memoEditorBackButton = document.querySelector('#memo-editor-back-button');
 const memoEditorCancelButton = document.querySelector('#memo-editor-cancel-button');
 const memoEditorSubmitButton = document.querySelector('#memo-editor-submit-button');
-const memoStorageKey = 'vanilla-memo-memos';
-const validCategories = ['daily', 'work', 'others'];
 let activeMemoId = null;
 let editorMode = null;
 const filterState = {
@@ -62,60 +61,7 @@ const filterState = {
   category: '',
 };
 
-const categoryLabels = {
-  daily: 'Daily',
-  work: 'Work',
-  others: 'Others',
-};
-
-function createInitialMemos() {
-  return initialMemos.map((memo) => ({ ...memo }));
-}
-
-function isStoredMemo(memo) {
-  return (
-    memo &&
-    typeof memo.id === 'string' &&
-    typeof memo.title === 'string' &&
-    typeof memo.content === 'string' &&
-    validCategories.includes(memo.category) &&
-    typeof memo.date === 'string' &&
-    typeof memo.isPinned === 'boolean'
-  );
-}
-
-function loadMemos() {
-  try {
-    const storedMemos = localStorage.getItem(memoStorageKey);
-
-    if (!storedMemos) {
-      return createInitialMemos();
-    }
-
-    const parsedMemos = JSON.parse(storedMemos);
-
-    // 브라우저 저장값이 손상되어도 화면이 멈추지 않도록 초기 데이터로 복구한다.
-    return Array.isArray(parsedMemos) && parsedMemos.every(isStoredMemo)
-      ? parsedMemos
-      : createInitialMemos();
-  } catch {
-    return createInitialMemos();
-  }
-}
-
-function saveMemos() {
-  try {
-    localStorage.setItem(memoStorageKey, JSON.stringify(memos));
-  } catch {
-    // 브라우저 저장소를 사용할 수 없어도 현재 화면은 계속 사용할 수 있다.
-  }
-}
-
 const memos = loadMemos();
-
-function formatDate(date) {
-  return date.replaceAll('-', '.');
-}
 
 function getVisibleMemos() {
   const keyword = filterState.keyword.trim().toLowerCase();
@@ -127,57 +73,6 @@ function getVisibleMemos() {
 
     return matchesCategory && matchesKeyword;
   });
-}
-
-function createMemoCard(memo) {
-  const listItem = document.createElement('li');
-  const memoCard = document.createElement('article');
-  const memoHeader = document.createElement('header');
-  const memoTitle = document.createElement('h3');
-  const pinButton = document.createElement('button');
-  const memoContent = document.createElement('p');
-  const memoFooter = document.createElement('footer');
-  const memoCategory = document.createElement('span');
-  const memoDate = document.createElement('time');
-
-  memoCard.className = `memo-card memo-card--${memo.category}`;
-  memoCard.dataset.memoId = memo.id;
-  memoCard.tabIndex = 0;
-  memoHeader.className = 'memo-card-header';
-  memoTitle.className = 'memo-title';
-  pinButton.className = 'pin-button';
-  memoContent.className = 'memo-content';
-  memoFooter.className = 'memo-card-footer';
-  memoCategory.className = 'memo-category';
-  memoDate.className = 'memo-date';
-
-  memoTitle.textContent = memo.title;
-  memoContent.textContent = memo.content;
-  memoCategory.textContent = categoryLabels[memo.category];
-  memoDate.dateTime = memo.date;
-  memoDate.textContent = formatDate(memo.date);
-
-  pinButton.type = 'button';
-  pinButton.dataset.memoId = memo.id;
-  pinButton.setAttribute('aria-pressed', String(memo.isPinned));
-  pinButton.setAttribute('aria-label', memo.isPinned ? '메모 고정 해제' : '메모 고정');
-
-  memoHeader.append(memoTitle, pinButton);
-  memoFooter.append(memoCategory, memoDate);
-  memoCard.append(memoHeader, memoContent, memoFooter);
-  listItem.append(memoCard);
-
-  return listItem;
-}
-
-function renderMemoGrid(memoGrid, memoList) {
-  const memoFragment = document.createDocumentFragment();
-
-  memoList.forEach((memo) => {
-    memoFragment.append(createMemoCard(memo));
-  });
-
-  memoGrid.replaceChildren(memoFragment);
 }
 
 function renderMemos() {
@@ -197,30 +92,6 @@ function renderMemos() {
   memoApp.classList.toggle('memo-app--memo-empty', hasNoMemos);
 }
 
-function renderTagFilterButton() {
-  const categoryLabel = categoryLabels[filterState.category];
-
-  tagFilterButton.classList.toggle('tag-filter-button--selected', Boolean(categoryLabel));
-  tagFilterButton.classList.remove(
-    'tag-filter-button--daily',
-    'tag-filter-button--work',
-    'tag-filter-button--others',
-  );
-  tagFilterIcon.hidden = Boolean(categoryLabel);
-  tagFilterLabel.replaceChildren();
-
-  if (!categoryLabel) {
-    tagFilterLabel.textContent = '태그 선택';
-    return;
-  }
-
-  const tagFilterDot = document.createElement('span');
-  tagFilterDot.className = 'tag-filter-dot';
-  tagFilterDot.setAttribute('aria-hidden', 'true');
-  tagFilterButton.classList.add(`tag-filter-button--${filterState.category}`);
-  tagFilterLabel.append(tagFilterDot, document.createTextNode(categoryLabel));
-}
-
 function closeTagFilterMenu() {
   tagFilterMenu.hidden = true;
   tagFilterButton.setAttribute('aria-expanded', 'false');
@@ -232,7 +103,12 @@ function updateSearchClearButton() {
 
 function updateFilterState() {
   renderMemos();
-  renderTagFilterButton();
+  renderTagFilterButton({
+    button: tagFilterButton,
+    label: tagFilterLabel,
+    icon: tagFilterIcon,
+    category: filterState.category,
+  });
   updateSearchClearButton();
 }
 
@@ -244,7 +120,7 @@ function toggleMemoPin(memoId) {
   }
 
   targetMemo.isPinned = !targetMemo.isPinned;
-  saveMemos();
+  saveMemos(memos);
   memoAnnouncement.textContent = targetMemo.isPinned
     ? '메모를 고정했습니다.'
     : '메모 고정을 해제했습니다.';
@@ -367,7 +243,7 @@ function deleteActiveMemo() {
   }
 
   memos.splice(targetIndex, 1);
-  saveMemos();
+  saveMemos(memos);
   memoAnnouncement.textContent = '메모를 삭제했습니다.';
   renderMemos();
   closeMemoDeleteDialog();
@@ -429,7 +305,7 @@ function handleMemoEditorSubmit(event) {
       date: memoEditorDate.value,
       isPinned: false,
     });
-    saveMemos();
+    saveMemos(memos);
     filterState.keyword = '';
     filterState.category = '';
     searchInput.value = '';
@@ -449,7 +325,7 @@ function handleMemoEditorSubmit(event) {
   targetMemo.category = category;
   targetMemo.date = memoEditorDate.value || targetMemo.date;
   targetMemo.content = content;
-  saveMemos();
+  saveMemos(memos);
   memoAnnouncement.textContent = '메모를 수정했습니다.';
   renderMemos();
   returnToMemoDetail();
