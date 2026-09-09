@@ -200,6 +200,15 @@ function openMemoEditor() {
   memoEditorTitle.focus();
 }
 
+function getTodayDate() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
 function openMemoCreate() {
   editorMode = 'create';
   activeMemoId = null;
@@ -207,7 +216,7 @@ function openMemoCreate() {
   memoEditorCancelButton.textContent = '작성 취소';
   memoEditorSubmitButton.textContent = '작성 완료';
   memoEditorTitle.value = '';
-  memoEditorDate.value = new Date().toISOString().slice(0, 10);
+  memoEditorDate.value = getTodayDate();
   memoEditorContent.value = '';
   renderMemoEditorCategory();
   closeMemoEditorCategoryMenu();
@@ -396,15 +405,18 @@ function handleMemoEditorCategoryMenuClick(event) {
   updateMemoEditorSubmitState();
 }
 
-function handleSearchInput() {
+function applyKeywordFilter() {
   filterState.keyword = searchInput.value;
   updateFilterState();
 }
 
+function handleSearchInput() {
+  applyKeywordFilter();
+}
+
 function handleSearchSubmit(event) {
   event.preventDefault();
-  filterState.keyword = searchInput.value;
-  updateFilterState();
+  applyKeywordFilter();
 }
 
 function handleSearchClear() {
