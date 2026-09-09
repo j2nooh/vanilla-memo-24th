@@ -15,7 +15,9 @@
   display: flex;
   width: 285px;
   height: 285px;
+  padding: 25px 34px 36px 21px;
   flex-direction: column;
+  gap: 20px;
   border-radius: 20px;
   color: var(--white00);
   cursor: pointer;
@@ -58,7 +60,7 @@
 .memo-content {
   display: -webkit-box;
   height: 141px;
-  margin-top: 12px;
+  margin-top: 0;
   overflow: hidden;
   color: inherit;
   font-size: var(--font-size-body-small);
@@ -85,7 +87,7 @@
 }
 
 .memo-date { text-align: right; }
-.memo-card--daily { padding: 32px 20px; background-color: var(--color-memo-daily); }
+.memo-card--daily { background-color: var(--color-memo-daily); }
 .memo-card--daily .memo-card-footer { color: var(--Blue-blue01); }
-.memo-card--work { padding: 32px 20px; background-color: var(--Blue-blue06); }
-.memo-card--others { padding: 32px 20px; background-color: var(--Gray-gray02); }
+.memo-card--work { background-color: var(--Blue-blue06); }
+.memo-card--others { background-color: var(--Gray-gray02); }
