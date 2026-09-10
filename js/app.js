@@ -348,22 +348,11 @@ function handleMemoGridClick(event) {
     return;
   }
 
-  const memoCard = event.target.closest('.memo-card');
+  const memoOpenButton = event.target.closest('.memo-card-open-button');
 
-  if (memoCard) {
-    openMemoDetail(memoCard.dataset.memoId);
+  if (memoOpenButton) {
+    openMemoDetail(memoOpenButton.dataset.memoId);
   }
-}
-
-function handleMemoGridKeydown(event) {
-  const memoCard = event.target.closest('.memo-card');
-
-  if (event.target.closest('.pin-button') || !memoCard || !['Enter', ' '].includes(event.key)) {
-    return;
-  }
-
-  event.preventDefault();
-  openMemoDetail(memoCard.dataset.memoId);
 }
 
 function handleMemoDetailClick(event) {
@@ -463,8 +452,6 @@ function handleDocumentKeydown(event) {
 
 pinnedMemoGrid.addEventListener('click', handleMemoGridClick);
 unpinnedMemoGrid.addEventListener('click', handleMemoGridClick);
-pinnedMemoGrid.addEventListener('keydown', handleMemoGridKeydown);
-unpinnedMemoGrid.addEventListener('keydown', handleMemoGridKeydown);
 searchInput.addEventListener('input', handleSearchInput);
 searchForm.addEventListener('submit', handleSearchSubmit);
 searchClearButton.addEventListener('click', handleSearchClear);
