@@ -1,0 +1,73 @@
+@font-face {
+  font-family: 'Pretendard';
+  src: url('../assets/fonts/PretendardVariable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Color System - Blue */
+  --Blue-blue01: #e4edff;
+  --Blue-blue02: #aac8ff;
+  --Blue-blue03: #a2c1ff;
+  --Blue-blue04: #5590ff;
+  --Blue-blue05: #0055f5;
+  --Blue-blue06: #0037a3;
+  --Blue-blue07: #001b51;
+
+  /* Color System - Gray */
+  --white00: #fafafa;
+  --Gray-gray01: #e0e2e5;
+  --Gray-gray02: #a6b7cb;
+  --Gray-gray03: #677b93;
+  --Gray-gray04: #485668;
+  --Gray-gray05: #29313c;
+  --black00: #121416;
+
+  /* Color System - Point */
+  --color-point: #ff5656;
+
+  /* Main GUI */
+  --color-memo-daily: #7ba7ff;
+  --color-memo-star: #e0e2e5;
+
+  /* Font System */
+  --font-family-base: 'Pretendard', sans-serif;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* Display/Large */
+  --font-size-display-large: 48px;
+  --line-height-display-large: 56px;
+
+  /* Heading */
+  --font-size-heading-large: 32px;
+  --line-height-heading-large: 40px;
+  --font-size-heading-medium: 24px;
+  --line-height-heading-medium: 32px;
+  --font-size-heading-small: 20px;
+  --line-height-heading-small: 28px;
+
+  /* Body */
+  --font-size-body-large: 18px;
+  --line-height-body-large: 28px;
+  --font-size-body-medium: 16px;
+  --line-height-body-medium: 24px;
+  --font-size-body-small: 14px;
+  --line-height-body-small: 20px;
+
+  /* Field */
+  --font-size-field-medium: 16px;
+  --line-height-field-medium: 24px;
+
+  /* Action */
+  --font-size-action-medium: 18px;
+  --line-height-action-medium: 28px;
+  --font-size-action-small: 16px;
+  --line-height-action-small: 24px;
+}

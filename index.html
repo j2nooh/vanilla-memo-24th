@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/reset.css" />
+    <link rel="stylesheet" href="./css/variables.css" />
+    <link rel="stylesheet" href="./css/layout.css" />
+    <link rel="stylesheet" href="./css/memo.css" />
+    <link rel="stylesheet" href="./css/dialog.css" />
+    <link rel="stylesheet" href="./css/responsive.css" />
+    <title>Vanilla Memo</title>
+  </head>
+  <body>
+    <main id="app" class="memo-app">
+      <header class="memo-header">
+        <h1 class="visually-hidden">바닐라 메모</h1>
+
+        <form class="search-form" role="search">
+          <div class="tag-filter">
+            <button
+              id="tag-filter-button"
+              class="tag-filter-button"
+              type="button"
+              aria-expanded="false"
+              aria-controls="tag-filter-menu"
+            >
+              <span class="tag-filter-label">태그 선택</span>
+              <img class="tag-filter-icon" src="./assets/icons/tag-arrow.svg" alt="" />
+            </button>
+            <div id="tag-filter-menu" class="tag-filter-menu" hidden>
+              <button type="button" data-category="">전체</button>
+              <button type="button" data-category="daily">Daily</button>
+              <button type="button" data-category="work">Work</button>
+              <button type="button" data-category="others">Others</button>
+            </div>
+          </div>
+          <label class="visually-hidden" for="memo-search">메모 검색</label>
+          <input
+            id="memo-search"
+            class="search-input"
+            type="search"
+            placeholder="원하는 메모를 검색하세요"
+          />
+          <button id="search-clear-button" class="search-clear-button" type="button" hidden>
+            <span class="search-clear-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">검색어 지우기</span>
+          </button>
+          <button class="search-button" type="submit" aria-label="메모 검색">
+            <img src="./assets/icons/search.svg" alt="" />
+          </button>
+        </form>
+
+        <div class="header-actions">
+          <button id="memo-create-button" class="icon-button" type="button" aria-label="메모 작성">
+            <img src="./assets/icons/plus.svg" alt="" />
+          </button>
+          <button class="icon-button" type="button" aria-label="프로필">
+            <img src="./assets/icons/profile.svg" alt="" />
+          </button>
+        </div>
+      </header>
+
+      <section class="memo-section" aria-labelledby="memo-list-title">
+        <h2 id="memo-list-title" class="visually-hidden">메모 목록</h2>
+        <p id="memo-announcement" class="visually-hidden" aria-live="polite"></p>
+        <ul class="memo-grid" aria-label="고정된 메모" hidden></ul>
+        <ul class="memo-grid" aria-label="작성된 메모"></ul>
+        <div id="memo-empty-state" class="empty-state empty-state--memo" hidden>
+          <div class="memo-empty-content">
+            <button id="memo-empty-create-button" class="memo-empty-icon" type="button" aria-label="새 메모 작성"></button>
+            <h3>새로운 메모를 작성해보세요!</h3>
+          </div>
+        </div>
+        <div id="search-empty-state" class="empty-state empty-state--search" hidden>
+          <div class="search-empty-content">
+            <span class="search-empty-icon" aria-hidden="true"></span>
+            <div class="search-empty-copy">
+              <h3>검색 결과가 없습니다</h3>
+              <p>다른 검색어로 다시 시도해보세요</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="memo-detail-dialog" class="memo-detail-dialog" aria-labelledby="memo-detail-title">
+      <article class="memo-detail-content">
+        <header class="memo-detail-header">
+          <h2 id="memo-detail-title"></h2>
+          <button id="memo-detail-close-button" class="memo-detail-close-button" type="button">
+            <img src="./assets/icons/exit.svg" alt="" />
+            <span class="visually-hidden">상세 메모 닫기</span>
+          </button>
+        </header>
+        <div class="memo-detail-main">
+          <div class="memo-detail-meta">
+            <span id="memo-detail-category" class="memo-detail-category"></span>
+            <img class="memo-detail-divider" src="./assets/icons/bar.svg" alt="" />
+            <time id="memo-detail-date"></time>
+          </div>
+          <p id="memo-detail-body" class="memo-detail-body"></p>
+        </div>
+        <footer class="memo-detail-actions">
+          <button id="memo-detail-edit-button" class="memo-detail-action-button" type="button" aria-label="메모 수정">
+            <img src="./assets/icons/modify.svg" alt="" />
+          </button>
+          <button id="memo-detail-delete-button" class="memo-detail-action-button" type="button" aria-label="메모 삭제">
+            <img src="./assets/icons/delete.svg" alt="" />
+          </button>
+        </footer>
+      </article>
+    </dialog>
+
+    <dialog id="memo-delete-dialog" class="memo-delete-dialog" aria-labelledby="memo-delete-title" aria-describedby="memo-delete-message">
+      <section class="memo-delete-content">
+        <div class="memo-delete-copy">
+          <h2 id="memo-delete-title">메모를 삭제 하시겠습니까?</h2>
+          <p id="memo-delete-message">삭제된 메모는 휴지통에서 확인 가능합니다.</p>
+        </div>
+        <footer class="memo-delete-actions">
+          <button id="memo-delete-cancel-button" class="memo-delete-button memo-delete-button--cancel" type="button">취소</button>
+          <button id="memo-delete-confirm-button" class="memo-delete-button memo-delete-button--confirm" type="button">삭제</button>
+        </footer>
+      </section>
+    </dialog>
+
+    <dialog id="memo-delete-success-dialog" class="memo-delete-dialog" aria-labelledby="memo-delete-success-title" aria-describedby="memo-delete-success-message">
+      <section class="memo-delete-content">
+        <div class="memo-delete-copy">
+          <h2 id="memo-delete-success-title">해당 메모가 삭제되었습니다</h2>
+          <p id="memo-delete-success-message">삭제된 메모는 휴지통에서 확인 가능합니다.</p>
+        </div>
+        <footer class="memo-delete-actions">
+          <button id="memo-delete-success-confirm-button" class="memo-delete-button memo-delete-button--confirm" type="button">확인</button>
+        </footer>
+      </section>
+    </dialog>
+
+    <dialog id="memo-create-success-dialog" class="memo-delete-dialog" aria-labelledby="memo-create-success-title" aria-describedby="memo-create-success-message">
+      <section class="memo-delete-content">
+        <div class="memo-delete-copy">
+          <h2 id="memo-create-success-title">작성이 완료되었습니다</h2>
+          <p id="memo-create-success-message">메인 화면에서 작성한 메모를 확인할 수 있어요.</p>
+        </div>
+        <footer class="memo-delete-actions">
+          <button id="memo-create-success-confirm-button" class="memo-delete-button memo-delete-button--confirm" type="button">확인</button>
+        </footer>
+      </section>
+    </dialog>
+
+    <dialog id="memo-create-exit-dialog" class="memo-delete-dialog" aria-labelledby="memo-create-exit-title" aria-describedby="memo-create-exit-message">
+      <section class="memo-delete-content">
+        <div class="memo-delete-copy">
+          <h2 id="memo-create-exit-title"></h2>
+          <p id="memo-create-exit-message">작성중이던 메모는 저장되지 않습니다.</p>
+        </div>
+        <footer class="memo-delete-actions">
+          <button id="memo-create-exit-cancel-button" class="memo-delete-button memo-delete-button--cancel" type="button">계속 작성하기</button>
+          <button id="memo-create-exit-confirm-button" class="memo-delete-button memo-delete-button--confirm" type="button"></button>
+        </footer>
+      </section>
+    </dialog>
+
+    <dialog id="memo-editor-dialog" class="memo-editor-dialog" aria-label="메모 수정">
+      <form id="memo-editor-form" class="memo-editor-form" novalidate>
+        <div class="memo-editor-page">
+          <button id="memo-editor-back-button" class="memo-editor-back-button" type="button">
+            <img src="./assets/icons/back.svg" alt="" />
+            <span class="visually-hidden">상세 메모로 돌아가기</span>
+          </button>
+
+          <div class="memo-editor-layout">
+            <section class="memo-editor-card">
+              <input id="memo-editor-title" class="memo-editor-title" name="title" type="text" maxlength="40" placeholder="제목을 입력하세요..." aria-required="true" />
+
+              <div class="memo-editor-meta">
+                <div class="memo-editor-category-selector">
+                  <button id="memo-editor-category" class="memo-editor-category" type="button" aria-expanded="false" aria-controls="memo-editor-category-menu">
+                    <span class="memo-editor-category-dot" aria-hidden="true"></span>
+                    <span class="memo-editor-category-label">Daily</span>
+                    <img class="memo-editor-category-arrow" src="./assets/icons/tag-arrow.svg" alt="" hidden />
+                  </button>
+                  <div id="memo-editor-category-menu" class="memo-editor-category-menu" hidden>
+                    <button type="button" data-editor-category="daily">Daily</button>
+                    <button type="button" data-editor-category="work">Work</button>
+                    <button type="button" data-editor-category="others">Others</button>
+                  </div>
+                </div>
+                <img class="memo-editor-divider" src="./assets/icons/bar.svg" alt="" />
+                <label class="visually-hidden" for="memo-editor-date">날짜</label>
+                <input id="memo-editor-date" class="memo-editor-date" name="date" type="date" />
+              </div>
+
+              <textarea id="memo-editor-content" class="memo-editor-content" name="content" placeholder="본문을 입력하세요..." aria-required="true"></textarea>
+            </section>
+
+            <footer class="memo-editor-actions">
+              <button id="memo-editor-cancel-button" class="memo-editor-button memo-editor-button--cancel" type="button">작성 취소</button>
+              <button id="memo-editor-submit-button" class="memo-editor-button memo-editor-button--submit" type="submit">수정 완료</button>
+            </footer>
+          </div>
+        </div>
+      </form>
+    </dialog>
+
+    <script type="module" src="./js/app.js"></script>
+  </body>
+</html>
